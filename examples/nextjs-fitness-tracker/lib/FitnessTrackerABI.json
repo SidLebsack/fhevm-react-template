@@ -1,0 +1,72 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_membershipType",
+        "type": "string"
+      }
+    ],
+    "name": "registerMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint32",
+        "name": "_caloriesBurned",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_durationMinutes",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_intensityLevel",
+        "type": "uint8"
+      }
+    ],
+    "name": "recordWorkout",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_member",
+        "type": "address"
+      }
+    ],
+    "name": "getMemberInfo",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "membershipType",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "workoutCount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
