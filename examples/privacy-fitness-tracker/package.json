@@ -1,0 +1,31 @@
+{
+  "name": "privacy-fitness-tracker",
+  "version": "1.0.0",
+  "description": "Privacy-preserving fitness tracking dApp with FHEVM - Example integration with @fhevm/sdk",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy": "hardhat run scripts/deploy.js --network sepolia",
+    "interact": "hardhat run scripts/interact.js --network sepolia",
+    "node": "hardhat node"
+  },
+  "keywords": [
+    "fhevm",
+    "privacy",
+    "fitness",
+    "hardhat",
+    "smart-contracts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  },
+  "dependencies": {
+    "@fhevm/sdk": "file:../../packages/fhevm-sdk",
+    "dotenv": "^16.0.0",
+    "ethers": "^6.14.0"
+  }
+}
