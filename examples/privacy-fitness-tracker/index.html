@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Fitness Club - Confidential Member Tracking</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(15, 52, 96, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 255, 234, 0.2);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 234, 0.3);
+        }
+
+        .header h1 {
+            color: #00ffea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(0, 255, 234, 0.5);
+        }
+
+        .header p {
+            color: #a8d0e6;
+            font-size: 1.2em;
+        }
+
+        .wallet-section {
+            background: rgba(15, 52, 96, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 255, 234, 0.2);
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 234, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ffea 0%, #0099ff 100%);
+            color: #0f3460;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+            box-shadow: 0 5px 15px rgba(0, 255, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 255, 234, 0.6);
+            background: linear-gradient(135deg, #00d4ea 0%, #0088ff 100%);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: rgba(15, 52, 96, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 255, 234, 0.2);
+            border: 1px solid rgba(0, 255, 234, 0.3);
+        }
+
+        .card h3 {
+            color: #00ffea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid rgba(0, 255, 234, 0.5);
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 234, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #a8d0e6;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(0, 255, 234, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background: rgba(26, 26, 46, 0.8);
+            color: #e8e8e8;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #00ffea;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 234, 0.3);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .status.info {
+            background: #bee3f8;
+            color: #2a4365;
+            border: 1px solid #90cdf4;
+        }
+
+        .member-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 234, 0.2);
+        }
+
+        .info-item h4 {
+            color: #a8d0e6;
+            margin-bottom: 8px;
+        }
+
+        .info-item p {
+            color: #00ffea;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .challenge-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 255, 234, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            background: rgba(26, 26, 46, 0.5);
+        }
+
+        .challenge-item {
+            background: rgba(15, 52, 96, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00ffea;
+        }
+
+        .challenge-item h5 {
+            color: #00ffea;
+            margin-bottom: 8px;
+        }
+
+        .challenge-item p {
+            color: #a8d0e6;
+            font-size: 0.9em;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #667eea;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .privacy-note {
+            background: rgba(0, 255, 234, 0.1);
+            border-left: 4px solid #00ffea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .privacy-note h4 {
+            color: #00ffea;
+            margin-bottom: 8px;
+        }
+
+        .privacy-note p {
+            color: #a8d0e6;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏋️ Privacy Fitness Club</h1>
+            <p>Confidential Member Tracking with Zama FHE Technology</p>
+            <div class="privacy-note">
+                <h4>🔒 Privacy Protection</h4>
+                <p>Your fitness data is fully encrypted using homomorphic encryption. Your personal workout metrics remain confidential while still enabling secure competitions and progress tracking.</p>
+            </div>
+        </div>
+
+        <div class="wallet-section">
+            <button id="connectWallet" class="btn">Connect Wallet</button>
+            <div id="walletInfo" class="hidden">
+                <p><strong>Connected:</strong> <span id="walletAddress"></span></p>
+                <p><strong>Network:</strong> <span id="networkName"></span></p>
+            </div>
+        </div>
+
+        <div id="statusDiv"></div>
+
+        <div class="main-content">
+            <!-- Member Registration -->
+            <div class="card">
+                <h3>👤 Member Registration</h3>
+                <div class="form-group">
+                    <label for="membershipType">Membership Type:</label>
+                    <select id="membershipType">
+                        <option value="">Select membership type</option>
+                        <option value="Basic">Basic ($29/month)</option>
+                        <option value="Premium">Premium ($59/month)</option>
+                        <option value="Elite">Elite ($99/month)</option>
+                        <option value="Corporate">Corporate ($149/month)</option>
+                    </select>
+                </div>
+                <button id="registerMember" class="btn">Register as Member</button>
+
+                <div id="memberInfo" class="member-info hidden">
+                    <div class="info-item">
+                        <h4>Status</h4>
+                        <p id="memberStatus">-</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>Join Date</h4>
+                        <p id="joinDate">-</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>Total Sessions</h4>
+                        <p id="totalSessions">-</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>Membership</h4>
+                        <p id="membershipDisplay">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workout Recording -->
+            <div class="card">
+                <h3>🏃 Record Workout</h3>
+                <div class="form-group">
+                    <label for="caloriesBurned">Calories Burned:</label>
+                    <input type="number" id="caloriesBurned" placeholder="e.g., 300" min="1" max="2000">
+                </div>
+                <div class="form-group">
+                    <label for="workoutDuration">Duration (minutes):</label>
+                    <input type="number" id="workoutDuration" placeholder="e.g., 45" min="1" max="300">
+                </div>
+                <div class="form-group">
+                    <label for="intensityLevel">Intensity Level (1-10):</label>
+                    <select id="intensityLevel">
+                        <option value="">Select intensity</option>
+                        <option value="1">1 - Very Light</option>
+                        <option value="2">2 - Light</option>
+                        <option value="3">3 - Light-Moderate</option>
+                        <option value="4">4 - Moderate</option>
+                        <option value="5">5 - Moderate-Hard</option>
+                        <option value="6">6 - Hard</option>
+                        <option value="7">7 - Very Hard</option>
+                        <option value="8">8 - Extremely Hard</option>
+                        <option value="9">9 - Maximum</option>
+                        <option value="10">10 - Beyond Maximum</option>
+                    </select>
+                </div>
+                <button id="recordWorkout" class="btn">Record Confidential Workout</button>
+            </div>
+
+            <!-- Challenge Management -->
+            <div class="card">
+                <h3>🏆 Create Challenge</h3>
+                <div class="form-group">
+                    <label for="challengeName">Challenge Name:</label>
+                    <input type="text" id="challengeName" placeholder="e.g., 30-Day Burn Challenge">
+                </div>
+                <div class="form-group">
+                    <label for="targetCalories">Target Calories:</label>
+                    <input type="number" id="targetCalories" placeholder="e.g., 5000" min="100">
+                </div>
+                <div class="form-group">
+                    <label for="challengeDuration">Duration (days):</label>
+                    <input type="number" id="challengeDuration" placeholder="e.g., 30" min="1" max="365">
+                </div>
+                <div class="form-group">
+                    <label for="prizeMoney">Prize Money (ETH):</label>
+                    <input type="number" id="prizeMoney" placeholder="0.1" step="0.01" min="0">
+                </div>
+                <button id="createChallenge" class="btn">Create Challenge</button>
+            </div>
+
+            <!-- Active Challenges -->
+            <div class="card">
+                <h3>🎯 Active Challenges</h3>
+                <div class="form-group">
+                    <label for="challengeId">Challenge ID:</label>
+                    <input type="number" id="challengeId" placeholder="Enter challenge ID" min="0">
+                </div>
+                <button id="joinChallenge" class="btn">Join Challenge</button>
+                <button id="viewChallenges" class="btn">Refresh Challenges</button>
+
+                <div id="challengesList" class="challenge-list">
+                    <p>Load challenges to see available competitions...</p>
+                </div>
+            </div>
+
+            <!-- Fitness Level Update -->
+            <div class="card">
+                <h3>💪 Update Fitness Level</h3>
+                <div class="form-group">
+                    <label for="newFitnessLevel">New Fitness Level (1-10):</label>
+                    <select id="newFitnessLevel">
+                        <option value="">Select level</option>
+                        <option value="1">1 - Beginner</option>
+                        <option value="2">2 - Novice</option>
+                        <option value="3">3 - Beginner-Intermediate</option>
+                        <option value="4">4 - Intermediate</option>
+                        <option value="5">5 - Intermediate-Advanced</option>
+                        <option value="6">6 - Advanced</option>
+                        <option value="7">7 - Expert</option>
+                        <option value="8">8 - Elite</option>
+                        <option value="9">9 - Professional</option>
+                        <option value="10">10 - World Class</option>
+                    </select>
+                </div>
+                <button id="updateFitnessLevel" class="btn">Update Level</button>
+            </div>
+
+            <!-- Contract Info -->
+            <div class="card">
+                <h3>📊 Contract Statistics</h3>
+                <div class="member-info">
+                    <div class="info-item">
+                        <h4>Total Members</h4>
+                        <p id="totalMembers">-</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>Active Challenges</h4>
+                        <p id="activeChallenges">-</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>Contract Owner</h4>
+                        <p id="contractOwner">-</p>
+                    </div>
+                </div>
+                <button id="loadStats" class="btn">Refresh Statistics</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
