@@ -1,0 +1,25 @@
+{
+  "name": "privacy-fitness-tracker-frontend",
+  "version": "1.0.0",
+  "description": "Privacy Fitness Tracker - React Frontend with FHEVM SDK Integration",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx"
+  },
+  "dependencies": {
+    "@fhevm/sdk": "file:../../../packages/fhevm-sdk",
+    "ethers": "^6.14.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"
+  }
+}
