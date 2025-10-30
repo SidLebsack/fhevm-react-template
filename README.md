@@ -265,28 +265,79 @@ fhevm-universal-sdk/
 │       └── README.md
 ├── examples/
 │   ├── nextjs-fitness-tracker/         # Next.js example (showcase)
-│   │   ├── app/
-│   │   │   ├── page.tsx                # Main dashboard
-│   │   │   ├── workout/                # Record workouts
-│   │   │   └── challenges/             # Join challenges
-│   │   ├── components/                 # Reusable components
-│   │   ├── hooks/                      # Custom hooks
-│   │   ├── lib/                        # Contract ABIs & utils
+│   │   ├── src/
+│   │   │   ├── app/                    # App Router (Next.js 13+)
+│   │   │   │   ├── layout.tsx          # Root layout
+│   │   │   │   ├── page.tsx            # Main dashboard
+│   │   │   │   ├── globals.css         # Global styles
+│   │   │   │   └── api/                # API routes
+│   │   │   │       ├── fhe/
+│   │   │   │       │   ├── route.ts         # FHE operations
+│   │   │   │       │   ├── encrypt/route.ts # Encryption API
+│   │   │   │       │   ├── decrypt/route.ts # Decryption API
+│   │   │   │       │   └── compute/route.ts # Computation API
+│   │   │   │       └── keys/route.ts        # Key management API
+│   │   │   ├── components/             # React components
+│   │   │   │   ├── ui/                 # UI components
+│   │   │   │   │   ├── Button.tsx
+│   │   │   │   │   ├── Input.tsx
+│   │   │   │   │   └── Card.tsx
+│   │   │   │   ├── fhe/                # FHE components
+│   │   │   │   │   ├── FHEProvider.tsx
+│   │   │   │   │   ├── EncryptionDemo.tsx
+│   │   │   │   │   ├── ComputationDemo.tsx
+│   │   │   │   │   └── KeyManager.tsx
+│   │   │   │   └── examples/           # Use case examples
+│   │   │   │       ├── BankingExample.tsx
+│   │   │   │       └── MedicalExample.tsx
+│   │   │   ├── lib/                    # Utilities
+│   │   │   │   ├── fhe/                # FHE integration
+│   │   │   │   │   ├── client.ts       # Client operations
+│   │   │   │   │   ├── server.ts       # Server operations
+│   │   │   │   │   ├── keys.ts         # Key management
+│   │   │   │   │   └── types.ts        # Type definitions
+│   │   │   │   └── utils/              # General utilities
+│   │   │   │       ├── security.ts
+│   │   │   │       └── validation.ts
+│   │   │   ├── hooks/                  # Custom hooks
+│   │   │   │   ├── useFHE.ts
+│   │   │   │   ├── useEncryption.ts
+│   │   │   │   └── useComputation.ts
+│   │   │   └── types/                  # TypeScript types
+│   │   │       ├── fhe.ts
+│   │   │       └── api.ts
 │   │   └── package.json
-│   └── privacy-fitness-tracker/        # Hardhat contracts
-│       ├── contracts/
+│   └── privacy-fitness-tracker/        # Smart contracts + React frontend
+│       ├── contracts/                  # Hardhat smart contracts
 │       │   └── PrivateFitnessTracker.sol
 │       ├── scripts/
 │       │   ├── deploy.js
 │       │   └── interact.js
 │       ├── test/
-│       └── hardhat.config.js
+│       ├── frontend/                   # React frontend with SDK integration
+│       │   ├── src/
+│       │   │   ├── components/         # React components
+│       │   │   │   ├── WalletConnect.tsx
+│       │   │   │   ├── MemberRegistration.tsx
+│       │   │   │   ├── WorkoutTracker.tsx
+│       │   │   │   ├── ChallengeManager.tsx
+│       │   │   │   └── ContractStats.tsx
+│       │   │   ├── App.tsx             # Main app
+│       │   │   ├── main.tsx            # Entry point
+│       │   │   └── index.css           # Styles
+│       │   └── package.json
+│       ├── hardhat.config.js
+│       ├── index.html                  # Legacy static demo
+│       └── app.js                      # Legacy static demo
 ├── docs/
 │   ├── README.md                       # Full documentation
 │   ├── API.md                          # API reference
 │   ├── EXAMPLES.md                     # Code examples
-│   └── MIGRATION.md                    # Migration guide
+│   ├── MIGRATION.md                    # Migration guide
+│   ├── ADVANCED.md                     # Advanced topics
+│   └── TROUBLESHOOTING.md              # Troubleshooting guide
 ├── demo.mp4                            # Video demonstration
+├── LICENSE                             # MIT License
 ├── package.json                        # Monorepo root
 └── README.md                           # This file
 ```
@@ -295,35 +346,55 @@ fhevm-universal-sdk/
 
 ## 🎯 Examples
 
-### Example 1: Privacy Fitness Tracker (Imported dApp)
+### Example 1: Privacy Fitness Tracker
 
 Located in `examples/privacy-fitness-tracker/`
 
-**Smart Contract:** Confidential fitness tracking with FHE
+**Full-Stack Privacy dApp** with smart contracts + React frontend
+
+**Smart Contract Features:**
 - Register members with encrypted membership details
 - Record workouts with encrypted calories, duration, intensity
 - Create and join challenges with prize pools
 - Decrypt personal stats with EIP-712 signatures
 
+**React Frontend Features:**
+- Built with React 18 + TypeScript + Vite
+- Full @fhevm/sdk integration
+- 5 specialized components:
+  - WalletConnect - MetaMask wallet connection
+  - MemberRegistration - Register with different tiers
+  - WorkoutTracker - Record encrypted workouts
+  - ChallengeManager - Create and join fitness challenges
+  - ContractStats - View contract statistics
+
 **Key Files:**
-- `contracts/PrivateFitnessTracker.sol` - Main contract with FHE
+- `contracts/PrivateFitnessTracker.sol` - Main FHE contract
+- `frontend/src/App.tsx` - React application
+- `frontend/src/components/` - React components with SDK hooks
 - `scripts/deploy.js` - Deployment automation
-- `test/PrivateFitnessTracker.test.js` - 100+ test cases
+- `test/` - Comprehensive test suite
 
 ### Example 2: Next.js Integration (Showcase)
 
 Located in `examples/nextjs-fitness-tracker/`
 
 **Features:**
-- ✅ Server-side rendering (SSR) compatible
-- ✅ Client-side FHE encryption
-- ✅ Real-time encrypted data display
-- ✅ MetaMask integration
-- ✅ Responsive UI with Tailwind CSS
+- ✅ **Complete App Router structure** with API routes for FHE operations
+- ✅ **Server-side rendering (SSR)** compatible with Next.js 13+
+- ✅ **Client-side FHE encryption** with real-time feedback
+- ✅ **Reusable UI components** (Button, Input, Card) optimized for FHE workflows
+- ✅ **FHE-specific components** (EncryptionDemo, ComputationDemo, KeyManager)
+- ✅ **Example use cases** (Banking, Medical) demonstrating privacy features
+- ✅ **Custom hooks** (useFHE, useEncryption, useComputation) for advanced patterns
+- ✅ **Type-safe** with comprehensive TypeScript definitions
+- ✅ **API routes** for server-side encryption/decryption operations
+- ✅ **MetaMask integration** with wallet connection
+- ✅ **Responsive UI** with Tailwind CSS
 
 **SDK Integration:**
 ```tsx
-// app/layout.tsx
+// src/app/layout.tsx
 import { FhevmProvider } from '@fhevm/sdk/react';
 
 export default function RootLayout({ children }) {
@@ -342,6 +413,20 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
+}
+```
+
+**Example Components:**
+```tsx
+// Using the SDK hooks
+import { useEncrypt, useDecrypt } from '@fhevm/sdk/react';
+import { Button, Input, Card } from '@/components';
+
+function MyComponent() {
+  const { encrypt, isEncrypting } = useEncrypt();
+  const { decrypt, isDecrypting } = useDecrypt();
+
+  // Component implementation...
 }
 ```
 
@@ -364,9 +449,14 @@ npm test                    # All tests
 npm run test:sdk           # SDK tests only
 npm run test:contracts     # Contract tests only
 
-# Start development
+# Start development servers
 npm run dev                # Start Next.js example
 npm run dev:nextjs         # Start Next.js explicitly
+
+# Start Privacy Fitness Tracker React frontend
+cd examples/privacy-fitness-tracker/frontend
+npm install
+npm run dev                # Runs on port 3001
 
 # Deploy contracts
 npm run deploy:local       # Deploy to local Hardhat
